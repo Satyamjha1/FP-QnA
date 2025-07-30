@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wi-Fi Attendance</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; }
+    iframe { width: 90%; height: 600px; border: none; display: none; }
+  </style>
+</head>
+<body>
+  <h2>Attendance Portal</h2>
+  <p id="status">Checking your network…</p>
+  
+  <iframe id="formFrame" src="https://docs.google.com/forms/d/e/1FAIpQLSfwz2XVRcokv_SA6XyAX6eQCHU5IgnNFPh-ETxt9m6VjkZjHg/viewform?usp=sharing&ouid=108892769048336877187"></iframe>
+
+  <script>
+    const allowedIP = "14.139.122.146"; // Replace with your campus Wi-Fi's public IP
+
+    fetch("https://api.ipify.org?format=json")
+      .then(res => res.json())
+      .then(data => {
+        if (data.ip === allowedIP) {
+          document.getElementById("status").innerText = "You're connected to campus Wi-Fi.";
+          document.getElementById("formFrame").style.display = "block";
+        } else {
+          document.getElementById("status").innerText = "Access denied. Please connect to campus Wi-Fi.";
+        }
+      })
+      .catch(() => {
+        document.getElementById("status").innerText = "Unable to check your IP.";
+      });
+  </script>
+</body>
+</html>
