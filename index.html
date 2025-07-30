@@ -1,88 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wi-Fi Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
+    html, body {
       margin: 0;
-      padding: 2rem;
-      text-align: center;
-      background-color: #f9f9f9;
-      color: #333;
-    }
-
-    h2 {
-      margin-bottom: 1rem;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      overflow: hidden;
     }
 
     #status {
-      margin-top: 1rem;
-      font-size: 1.1rem;
+      text-align: center;
+      padding: 20px;
+      font-size: 1.2em;
+      color: #333;
     }
 
-    #formFrame {
-      display: none;
+    iframe {
       width: 100%;
-      max-width: 600px;
-      height: 80vh;
+      height: 100%;
       border: none;
-      margin-top: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .spinner {
-      border: 4px solid #eee;
-      border-top: 4px solid #333;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      margin: 1rem auto;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h2>Attendance Portal</h2>
-  <div class="spinner" id="loader"></div>
-  <p id="status">Checking your network…</p>
 
-  <iframe
-    id="formFrame"
-    src="https://docs.google.com/forms/d/e/1FAIpQLSfwz2XVRcokv_SA6XyAX6eQCHU5IgnNFPh-ETxt9m6VjkZjHg/viewform?embedded=true">
-  </iframe>
+  <div id="status">Checking your network…</div>
+
+  <iframe id="formFrame" src="https://docs.google.com/forms/d/e/1FAIpQLSfwz2XVRcokv_SA6XyAX6eQCHU5IgnNFPh-ETxt9m6VjkZjHg/viewform?embedded=true"></iframe>
 
   <script>
-    const allowedIP = "14.139.122.146";
+    const allowedIP = "14.139.122.146"; // Change this to your current IP for testing
 
     fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
       .then(data => {
-        document.getElementById("loader").style.display = "none";
         if (data.ip === allowedIP) {
-          document.getElementById("status").innerText = "You're connected to campus Wi-Fi.";
+          document.getElementById("status").style.display = "none";
           document.getElementById("formFrame").style.display = "block";
         } else {
-          document.getElementById("status").innerText =
-            "Access denied. Please connect to the campus Wi-Fi to access the quiz.";
+          document.getElementById("status").innerText = "Access denied. Please connect to campus Wi-Fi.";
         }
       })
       .catch(() => {
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("status").innerText =
-          "Unable to verify your IP. Please check your connection.";
+        document.getElementById("status").innerText = "Unable to check your IP.";
       });
   </script>
 
-  <noscript>
-    <p style="color: red;">This site requires JavaScript to function. Please enable JavaScript in your browser.</p>
-  </noscript>
 </body>
 </html>
