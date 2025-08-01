@@ -1,28 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Wi-Fi Attendance</title>
+  <meta charset="UTF-8">
+  <title>Attendance</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      overflow: hidden;
+      background: #ffffff;
+      font-family: system-ui, sans-serif;
     }
 
     #status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      font-size: 1rem;
+      color: #444;
       text-align: center;
-      padding: 20px;
-      font-size: 1.2em;
-      color: #333;
+      padding: 1em;
     }
 
     iframe {
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       border: none;
       display: none;
     }
@@ -30,26 +34,35 @@
 </head>
 <body>
 
-  <div id="status">Checking your network…</div>
-
-  <iframe id="formFrame" src="https://docs.google.com/forms/d/e/1FAIpQLSfwz2XVRcokv_SA6XyAX6eQCHU5IgnNFPh-ETxt9m6VjkZjHg/viewform?embedded=true"></iframe>
+  <div id="status">Checking network access…</div>
+  <iframe id="formFrame"></iframe>
 
   <script>
-    const allowedIP = "14.139.122.146"; // Change this to your current IP for testing
+    async function init() {
+      try {
+        const [ipRes, configRes] = await Promise.all([
+          fetch("https://api.ipify.org?format=json"),
+          fetch("config.json")
+        ]);
 
-    fetch("https://api.ipify.org?format=json")
-      .then(res => res.json())
-      .then(data => {
-        if (data.ip === allowedIP) {
+        const ip = (await ipRes.json()).ip;
+        const config = await configRes.json();
+
+        if (ip === config.allowedIP) {
+          const frame = document.getElementById("formFrame");
+          frame.src = config.formURL;
+          frame.style.display = "block";
           document.getElementById("status").style.display = "none";
-          document.getElementById("formFrame").style.display = "block";
         } else {
-          document.getElementById("status").innerText = "Access denied. Please connect to campus Wi-Fi.";
+          document.getElementById("status").innerText = "Access denied. Connect to campus Wi-Fi.";
         }
-      })
-      .catch(() => {
-        document.getElementById("status").innerText = "Unable to check your IP.";
-      });
+      } catch (e) {
+        document.getElementById("status").innerText = "Error loading form. Try again later.";
+        console.error(e);
+      }
+    }
+
+    init();
   </script>
 
 </body>
